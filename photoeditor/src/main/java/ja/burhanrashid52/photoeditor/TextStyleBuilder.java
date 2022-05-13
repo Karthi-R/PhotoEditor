@@ -1,5 +1,6 @@
 package ja.burhanrashid52.photoeditor;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -22,7 +23,22 @@ import java.util.Map;
 public class TextStyleBuilder {
 
     private Map<TextStyle, Object> values = new HashMap<>();
-    protected Map<TextStyle, Object> getValues() { return values; }
+    public Map<TextStyle, Object> getValues() { return values; }
+
+    public void setValues(HashMap<TextStyle, Object> values) {
+        this.values = values;
+    }
+
+    public Object getKey(TextStyle key) {
+        if(values !=null) {
+            return values.get(key);
+        }
+        return null;
+    }
+
+    public TextStyleBuilder() {
+        this.values.put(TextStyle.COLOR, Color.WHITE);
+    }
 
     /**
      * Set this textSize style
@@ -121,7 +137,7 @@ public class TextStyleBuilder {
      *
      * @param textView TextView to apply the style
      */
-    void applyStyle(@NonNull TextView textView) {
+    public void applyStyle(@NonNull TextView textView) {
         for (Map.Entry<TextStyle, Object> entry : values.entrySet()) {
             switch (entry.getKey()) {
                 case SIZE: {
@@ -266,7 +282,7 @@ public class TextStyleBuilder {
     /**
      * Enum to maintain current supported style properties used on on {@link PhotoEditor#addText(String, TextStyleBuilder)} and {@link PhotoEditor#editText(View, String, TextStyleBuilder)}
      */
-    protected enum TextStyle {
+    public enum TextStyle {
         SIZE("TextSize"),
         COLOR("TextColor"),
         GRAVITY("Gravity"),

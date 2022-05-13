@@ -30,6 +30,11 @@ class BoxHelper {
             if (imgClose != null) {
                 imgClose.setVisibility(View.GONE);
             }
+
+            ImageView imgEdit = childAt.findViewById(R.id.imgPhotoEditorEdit);
+            if (imgEdit != null) {
+                imgEdit.setVisibility(View.GONE);
+            }
         }
         mViewState.clearCurrentSelectedView();
     }

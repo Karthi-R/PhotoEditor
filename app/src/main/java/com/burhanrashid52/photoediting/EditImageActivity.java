@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import com.burhanrashid52.photoediting.filters.FilterViewAdapter;
 import com.burhanrashid52.photoediting.tools.EditingToolsAdapter;
 import com.burhanrashid52.photoediting.tools.ToolType;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.resources.TextAppearance;
 
 import java.io.File;
 import java.io.IOException;
@@ -197,16 +199,21 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
         imgShare = findViewById(R.id.imgShare);
         imgShare.setOnClickListener(this);
+        imgShare.setVisibility(View.GONE);
 
     }
 
     @Override
-    public void onEditTextChangeListener(final View rootView, String text, int colorCode) {
+    public void onEditTextChangeListener(final View rootView, String text, TextStyleBuilder style) {
         TextEditorDialogFragment textEditorDialogFragment =
-                TextEditorDialogFragment.show(this, text, colorCode);
-        textEditorDialogFragment.setOnTextEditorListener((inputText, newColorCode) -> {
+                TextEditorDialogFragment.show(this, style, text);
+        textEditorDialogFragment.setOnTextEditorListener((inputText, textColor, bgColor, isBold, isUnderline, gravity) -> {
             final TextStyleBuilder styleBuilder = new TextStyleBuilder();
-            styleBuilder.withTextColor(newColorCode);
+            styleBuilder.withTextColor(textColor);
+            styleBuilder.withBackgroundColor(bgColor);
+            styleBuilder.withTextStyle(isBold ? 1 : 0);
+            styleBuilder.withGravity(gravity);
+            styleBuilder.withTextFlag(isUnderline ? Paint.UNDERLINE_TEXT_FLAG : 0);
 
             mPhotoEditor.editText(rootView, inputText, styleBuilder);
             mTxtCurrentTool.setText(R.string.label_text);
@@ -429,9 +436,13 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                 break;
             case TEXT:
                 TextEditorDialogFragment textEditorDialogFragment = TextEditorDialogFragment.show(this);
-                textEditorDialogFragment.setOnTextEditorListener((inputText, colorCode) -> {
+                textEditorDialogFragment.setOnTextEditorListener((inputText, textColor, bgColor, isBold, isUnderline, gravity) -> {
                     final TextStyleBuilder styleBuilder = new TextStyleBuilder();
-                    styleBuilder.withTextColor(colorCode);
+                    styleBuilder.withTextColor(textColor);
+                    styleBuilder.withBackgroundColor(bgColor);
+                    styleBuilder.withTextStyle(isBold ? 1 : 0);
+                    styleBuilder.withGravity(gravity);
+                    styleBuilder.withTextFlag(isUnderline ? Paint.UNDERLINE_TEXT_FLAG : 0);
 
                     mPhotoEditor.addText(inputText, styleBuilder);
                     mTxtCurrentTool.setText(R.string.label_text);

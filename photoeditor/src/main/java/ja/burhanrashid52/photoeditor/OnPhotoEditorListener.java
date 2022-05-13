@@ -20,10 +20,8 @@ public interface OnPhotoEditorListener {
      * edit the current {@link android.widget.TextView}
      *
      * @param rootView  view on which the long press occurs
-     * @param text      current text set on the view
-     * @param colorCode current color value set on view
      */
-    void onEditTextChangeListener(View rootView, String text, int colorCode);
+    void onEditTextChangeListener(View rootView, String text, TextStyleBuilder builder);
 
     /**
      * This is a callback when user adds any view on the {@link PhotoEditorView} it can be

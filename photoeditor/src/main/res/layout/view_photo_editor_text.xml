@@ -25,10 +25,18 @@
 
     <ImageView
         android:id="@+id/imgPhotoEditorClose"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_gravity="top|start"
         android:elevation="1dp"
-        android:src="@drawable/ic_remove" />
+        android:src="@drawable/ic_delete" />
+
+    <ImageView
+        android:id="@+id/imgPhotoEditorEdit"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_gravity="top|end"
+        android:elevation="1dp"
+        android:src="@drawable/ic_edit" />
 
 </FrameLayout>

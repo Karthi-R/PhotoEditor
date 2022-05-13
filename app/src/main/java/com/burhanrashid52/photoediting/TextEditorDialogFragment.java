@@ -2,51 +2,67 @@ package com.burhanrashid52.photoediting;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.HashMap;
+
+import ja.burhanrashid52.photoeditor.TextStyleBuilder;
 
 /**
  * Created by Burhanuddin Rashid on 1/16/2018.
  */
 
-public class TextEditorDialogFragment extends DialogFragment {
+public class TextEditorDialogFragment extends DialogFragment implements View.OnClickListener {
 
     public static final String TAG = TextEditorDialogFragment.class.getSimpleName();
+    public static final String EXTRA_TEXT_STYLE = "extra_text_style";
     public static final String EXTRA_INPUT_TEXT = "extra_input_text";
-    public static final String EXTRA_COLOR_CODE = "extra_color_code";
     private EditText mAddTextEditText;
     private TextView mAddTextDoneTextView;
     private InputMethodManager mInputMethodManager;
-    private int mColorCode;
+
+    private ImageButton colorPickerBtn, boldBtn, alignBtn, bgBtn, underlineBtn;
+    private int mTextColor, mBgColor, mGravity = Gravity.CENTER;
+    private boolean isBold, isUnderline;
+
     private TextEditor mTextEditor;
 
+    RecyclerView addTextColorPickerRecyclerView;
+
     public interface TextEditor {
-        void onDone(String inputText, int colorCode);
+        void onDone(String inputText, int textColor, int bgColor, boolean isBold, boolean isUnderline, int gravity);
     }
 
 
     //Show dialog with provide text and text color
     public static TextEditorDialogFragment show(@NonNull AppCompatActivity appCompatActivity,
-                                                @NonNull String inputText,
-                                                @ColorInt int colorCode) {
+                                                TextStyleBuilder styleBuilder, String inputText) {
         Bundle args = new Bundle();
-        args.putString(EXTRA_INPUT_TEXT, inputText);
-        args.putInt(EXTRA_COLOR_CODE, colorCode);
+        if (styleBuilder != null) {
+            args.putSerializable(EXTRA_TEXT_STYLE, new HashMap<>(styleBuilder.getValues()));
+            args.putString(EXTRA_INPUT_TEXT, inputText);
+        }
+
         TextEditorDialogFragment fragment = new TextEditorDialogFragment();
         fragment.setArguments(args);
         fragment.show(appCompatActivity.getSupportFragmentManager(), TAG);
@@ -55,8 +71,7 @@ public class TextEditorDialogFragment extends DialogFragment {
 
     //Show dialog with default text input as empty and text color white
     public static TextEditorDialogFragment show(@NonNull AppCompatActivity appCompatActivity) {
-        return show(appCompatActivity,
-                "", ContextCompat.getColor(appCompatActivity, R.color.white));
+        return show(appCompatActivity, null, "");
     }
 
     @Override
@@ -82,42 +97,140 @@ public class TextEditorDialogFragment extends DialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAddTextEditText = view.findViewById(R.id.add_text_edit_text);
+        colorPickerBtn = view.findViewById(R.id.btn_color_picker);
+        boldBtn = view.findViewById(R.id.btn_bold);
+        bgBtn = view.findViewById(R.id.btn_bg);
+        alignBtn = view.findViewById(R.id.btn_align);
+        underlineBtn = view.findViewById(R.id.btn_underline);
+
+        TextStyleBuilder styleBuilder = new TextStyleBuilder();
+        if (getArguments().getSerializable(EXTRA_TEXT_STYLE) != null) {
+            styleBuilder.setValues((HashMap<TextStyleBuilder.TextStyle, Object>) getArguments().getSerializable(EXTRA_TEXT_STYLE));
+            styleBuilder.applyStyle(mAddTextEditText);
+
+            mTextColor = (int) styleBuilder.getKey(TextStyleBuilder.TextStyle.COLOR);
+            mBgColor = (int) styleBuilder.getKey(TextStyleBuilder.TextStyle.BACKGROUND);
+            mGravity = (int) styleBuilder.getKey(TextStyleBuilder.TextStyle.GRAVITY);
+            isBold = (int) styleBuilder.getKey(TextStyleBuilder.TextStyle.TEXT_STYLE) == Typeface.BOLD;
+            isUnderline = (int) styleBuilder.getKey(TextStyleBuilder.TextStyle.TEXT_FLAG) == Paint.UNDERLINE_TEXT_FLAG;
+
+            colorPickerBtn.setColorFilter(mTextColor, android.graphics.PorterDuff.Mode.SRC_IN);
+            bgBtn.setColorFilter(mBgColor, android.graphics.PorterDuff.Mode.SRC_IN);
+            updateGravityBtn();
+            updateBoldBtn();
+            updateUnderlineBtn();
+
+        } else {
+            mAddTextEditText.setTextColor(getResources().getColor(R.color.white));
+        }
+
+        String text = getArguments().getString(EXTRA_INPUT_TEXT);
+        mAddTextEditText.setText(text);
+
         mInputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mAddTextDoneTextView = view.findViewById(R.id.add_text_done_tv);
 
         //Setup the color picker for text color
-        RecyclerView addTextColorPickerRecyclerView = view.findViewById(R.id.add_text_color_picker_recycler_view);
+        addTextColorPickerRecyclerView = view.findViewById(R.id.add_text_color_picker_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         addTextColorPickerRecyclerView.setLayoutManager(layoutManager);
         addTextColorPickerRecyclerView.setHasFixedSize(true);
         ColorPickerAdapter colorPickerAdapter = new ColorPickerAdapter(getActivity());
+
         //This listener will change the text color when clicked on any color from picker
-        colorPickerAdapter.setOnColorPickerClickListener(new ColorPickerAdapter.OnColorPickerClickListener() {
-            @Override
-            public void onColorPickerClickListener(int colorCode) {
-                mColorCode = colorCode;
+        colorPickerAdapter.setOnColorPickerClickListener(colorCode -> {
+            if (colorPickerBtn.isActivated()) {
+                mTextColor = colorCode;
                 mAddTextEditText.setTextColor(colorCode);
+                colorPickerBtn.setColorFilter(mTextColor, android.graphics.PorterDuff.Mode.SRC_IN);
+            } else {
+                mBgColor = colorCode;
+                mAddTextEditText.setBackgroundColor(colorCode);
+                bgBtn.setColorFilter(mBgColor, android.graphics.PorterDuff.Mode.SRC_IN);
             }
+
         });
+
         addTextColorPickerRecyclerView.setAdapter(colorPickerAdapter);
-        mAddTextEditText.setText(getArguments().getString(EXTRA_INPUT_TEXT));
-        mColorCode = getArguments().getInt(EXTRA_COLOR_CODE);
-        mAddTextEditText.setTextColor(mColorCode);
+
+        //mAddTextEditText.setTextColor(mTextColor);
         mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
         //Make a callback on activity when user is done with text editing
-        mAddTextDoneTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mInputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                dismiss();
-                String inputText = mAddTextEditText.getText().toString();
-                if (!TextUtils.isEmpty(inputText) && mTextEditor != null) {
-                    mTextEditor.onDone(inputText, mColorCode);
-                }
+        mAddTextDoneTextView.setOnClickListener(view1 -> {
+            mInputMethodManager.hideSoftInputFromWindow(view1.getWindowToken(), 0);
+            dismiss();
+            String inputText = mAddTextEditText.getText().toString();
+            if (!TextUtils.isEmpty(inputText) && mTextEditor != null) {
+                mTextEditor.onDone(inputText, mTextColor, mBgColor, isBold, isUnderline, mGravity);
             }
         });
 
+        colorPickerBtn.setOnClickListener(this);
+        bgBtn.setOnClickListener(this);
+        underlineBtn.setOnClickListener(this);
+        boldBtn.setOnClickListener(this);
+        alignBtn.setOnClickListener(this);
+
+    }
+
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.btn_color_picker:
+                boolean isFontColorPickerVisible = addTextColorPickerRecyclerView.getVisibility() == View.VISIBLE;
+                bgBtn.setActivated(false);
+                colorPickerBtn.setActivated(!isFontColorPickerVisible);
+                addTextColorPickerRecyclerView.setVisibility(isFontColorPickerVisible ? View.GONE : View.VISIBLE);
+                break;
+
+            case R.id.btn_bg:
+                boolean isFontBgPickerVisible = addTextColorPickerRecyclerView.getVisibility() == View.VISIBLE;
+                colorPickerBtn.setActivated(false);
+                bgBtn.setActivated(!isFontBgPickerVisible);
+                addTextColorPickerRecyclerView.setVisibility(isFontBgPickerVisible ? View.GONE : View.VISIBLE);
+                break;
+
+            case R.id.btn_bold:
+                isBold = !isBold;
+                updateBoldBtn();
+                break;
+
+            case R.id.btn_underline:
+                isUnderline = !isUnderline;
+                updateUnderlineBtn();
+                break;
+
+            case R.id.btn_align:
+                mGravity = mGravity == Gravity.LEFT ? Gravity.RIGHT : (mGravity == Gravity.RIGHT) ? Gravity.CENTER : Gravity.LEFT;
+                mAddTextEditText.setGravity(mGravity);
+                updateGravityBtn();
+                break;
+        }
+
+    }
+
+    private void updateGravityBtn() {
+        alignBtn.setImageDrawable(getResources().getDrawable(mGravity == Gravity.LEFT ? R.drawable.ic_baseline_format_align_left_24 :
+                mGravity == Gravity.RIGHT ? R.drawable.ic_baseline_format_align_right_24 : R.drawable.ic_baseline_format_align_center_24));
+    }
+
+    private void updateBoldBtn() {
+        int color = isBold ? R.color.colorPrimary : R.color.black;
+        boldBtn.setColorFilter(ContextCompat.getColor(getContext(), color), android.graphics.PorterDuff.Mode.SRC_IN);
+        mAddTextEditText.setTypeface(isBold ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+    }
+
+    private void updateUnderlineBtn() {
+        int underlineColor = isUnderline ? R.color.colorPrimary : R.color.black;
+        underlineBtn.setColorFilter(ContextCompat.getColor(getContext(), underlineColor), android.graphics.PorterDuff.Mode.SRC_IN);
+        if (isUnderline) {
+            mAddTextEditText.setPaintFlags(mAddTextEditText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        } else {
+            mAddTextEditText.setPaintFlags(0);
+        }
     }
 
 

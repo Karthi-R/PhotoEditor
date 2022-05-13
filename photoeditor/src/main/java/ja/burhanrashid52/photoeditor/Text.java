@@ -1,9 +1,12 @@
 package ja.burhanrashid52.photoeditor;
 
+import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -66,6 +69,16 @@ class Text extends Graphic {
             mTextView.setGravity(Gravity.CENTER);
             mTextView.setTypeface(mDefaultTextTypeface);
         }
+
+        final ImageView imgEdit = rootView.findViewById(R.id.imgPhotoEditorEdit);
+        if (imgEdit != null) {
+            imgEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateView(getRootView());
+                }
+            });
+        }
     }
 
     @Override
@@ -74,7 +87,19 @@ class Text extends Graphic {
         int currentTextColor = mTextView.getCurrentTextColor();
         OnPhotoEditorListener photoEditorListener = mGraphicManager.getOnPhotoEditorListener();
         if (photoEditorListener != null) {
-            photoEditorListener.onEditTextChangeListener(view, textInput, currentTextColor);
+            final TextStyleBuilder styleBuilder = new TextStyleBuilder();
+            styleBuilder.withTextColor(currentTextColor);
+
+            if(mTextView.getBackground() instanceof ColorDrawable) {
+                ColorDrawable cd = (ColorDrawable) mTextView.getBackground();
+                styleBuilder.withBackgroundColor(cd.getColor());
+            }
+            boolean isUnderline = false;
+
+            styleBuilder.withTextStyle(mTextView.getTypeface().getStyle() == Typeface.BOLD ? 1 : 0);
+            styleBuilder.withGravity(mTextView.getGravity());
+            styleBuilder.withTextFlag(isUnderline ? Paint.UNDERLINE_TEXT_FLAG : 0);
+            photoEditorListener.onEditTextChangeListener(view, textInput, styleBuilder);
         }
     }
 }

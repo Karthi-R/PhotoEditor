@@ -24,11 +24,42 @@ public class StickerBSFragment extends BottomSheetDialogFragment {
 
     // Image Urls from flaticon(https://www.flaticon.com/stickers-pack/food-289)
     private static String[] stickerPathList = new String[]{
-            "https://cdn-icons-png.flaticon.com/256/4392/4392452.png",
+
+            // party
+            "https://cdn-icons-png.flaticon.com/256/4442/4442765.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392550.png",
+            "https://cdn-icons-png.flaticon.com/256/4213/4213654.png",
+            "https://cdn-icons-png.flaticon.com/256/4213/4213713.png",
+            "https://cdn-icons-png.flaticon.com/256/4497/4497505.png",
+            "https://cdn-icons-png.flaticon.com/256/6225/6225102.png",
+            "https://cdn-icons-png.flaticon.com/256/7353/7353900.png",
+
+            "https://cdn-icons-png.flaticon.com/256/6702/6702470.png",
+            "https://cdn-icons-png.flaticon.com/256/6702/6702471.png",
+            "https://cdn-icons-png.flaticon.com/256/6702/6702473.png",
+            "https://cdn-icons-png.flaticon.com/256/6702/6702474.png",
+            "https://cdn-icons-png.flaticon.com/256/6702/6702478.png",
+            "https://cdn-icons-png.flaticon.com/256/6702/6702479.png",
+            "https://cdn-icons-png.flaticon.com/256/6702/6702480.png",
+            "https://cdn-icons-png.flaticon.com/256/6852/6852998.png",
+            "https://cdn-icons-png.flaticon.com/256/6852/6852980.png",
+
+            "https://cdn-icons-png.flaticon.com/256/6852/6852970.png",
+            "https://cdn-icons-png.flaticon.com/256/6852/6852967.png",
+            "https://cdn-icons-png.flaticon.com/256/6853/6853028.png",
+            "https://cdn-icons-png.flaticon.com/256/6852/6852961.png",
+            "https://cdn-icons-png.flaticon.com/256/6702/6702475.png",
+
+
+            // others
             "https://cdn-icons-png.flaticon.com/256/4392/4392455.png",
             "https://cdn-icons-png.flaticon.com/256/4392/4392459.png",
             "https://cdn-icons-png.flaticon.com/256/4392/4392462.png",
-            "https://cdn-icons-png.flaticon.com/256/4392/4392465.png",};
+            "https://cdn-icons-png.flaticon.com/256/4392/4392465.png",
+            "https://cdn-icons-png.flaticon.com/256/6738/6738563.png",
+            "https://cdn-icons-png.flaticon.com/256/6299/6299773.png",
+            "https://cdn-icons-png.flaticon.com/256/6738/6738558.png",
+    };
 
     public StickerBSFragment() {
         // Required empty public constructor

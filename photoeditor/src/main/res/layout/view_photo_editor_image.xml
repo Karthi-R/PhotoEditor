@@ -9,7 +9,7 @@
         android:layout_height="25dp"
         android:layout_gravity="top|start"
         android:elevation="1dp"
-        android:src="@drawable/ic_remove" />
+        android:src="@drawable/ic_delete" />
 
     <FrameLayout
         android:id="@+id/frmBorder"

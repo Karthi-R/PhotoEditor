@@ -64,12 +64,17 @@ abstract class Graphic {
     protected void toggleSelection() {
         View frmBorder = mRootView.findViewById(R.id.frmBorder);
         View imgClose = mRootView.findViewById(R.id.imgPhotoEditorClose);
+        View imgEdit = mRootView.findViewById(R.id.imgPhotoEditorEdit);
         if (frmBorder != null) {
             frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
             frmBorder.setTag(true);
         }
         if (imgClose != null) {
             imgClose.setVisibility(View.VISIBLE);
+        }
+
+        if (imgEdit != null) {
+            imgEdit.setVisibility(getViewType() == ViewType.TEXT ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -86,7 +91,7 @@ abstract class Graphic {
 
             @Override
             public void onLongClick() {
-                updateView(mRootView);
+                //updateView(mRootView);
             }
         };
     }
