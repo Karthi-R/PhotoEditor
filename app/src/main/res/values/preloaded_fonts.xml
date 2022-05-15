@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="preloaded_fonts" translatable="false">
+        <item>@font/abel</item>
+        <item>@font/asul</item>
+        <item>@font/belleza</item>
+        <item>@font/cherry_swash</item>
+        <item>@font/coming_soon</item>
+        <item>@font/federo</item>
+        <item>@font/krona_one</item>
         <item>@font/roboto_medium</item>
+        <item>@font/slabo_27px</item>
+        <item>@font/viaoda_libre</item>
     </array>
 </resources>
