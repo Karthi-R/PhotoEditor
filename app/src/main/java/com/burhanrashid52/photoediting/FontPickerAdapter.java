@@ -1,6 +1,7 @@
 package com.burhanrashid52.photoediting;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ import java.util.List;
 public class FontPickerAdapter extends RecyclerView.Adapter<FontPickerAdapter.ViewHolder> {
 
     private LayoutInflater inflater;
-    private List<Integer> fontList;
+    private List<FontInfo> fontList;
 
     public FontPickerAdapter(@NonNull Context context) {
         this.inflater = LayoutInflater.from(context);
@@ -35,7 +36,9 @@ public class FontPickerAdapter extends RecyclerView.Adapter<FontPickerAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.fontTv.setTypeface(ResourcesCompat.getFont(holder.itemView.getContext(), fontList.get(position)));
+        Typeface tf = ResourcesCompat.getFont(holder.itemView.getContext(), fontList.get(position).id);
+        holder.fontTv.setTypeface(tf);
+        holder.fontTv.setText(fontList.get(position).name);
     }
 
     @Override
@@ -56,17 +59,17 @@ public class FontPickerAdapter extends RecyclerView.Adapter<FontPickerAdapter.Vi
         void onFontPickerClickListener(int font);
     }
 
-    public static List<Integer> getDefaultFonts() {
-        ArrayList<Integer> fonts = new ArrayList<>();
-        fonts.add(R.font.krona_one);
-        fonts.add(R.font.viaoda_libre);
-        fonts.add(R.font.abel);
-        fonts.add(R.font.belleza);
-        fonts.add(R.font.cherry_swash);
-        fonts.add(R.font.asul);
-        fonts.add(R.font.coming_soon);
-        fonts.add(R.font.roboto_medium);
-        fonts.add(R.font.slabo_27px);
+    public static List<FontInfo> getDefaultFonts() {
+        ArrayList<FontInfo> fonts = new ArrayList<>();
+        fonts.add(new FontInfo(R.font.krona_one, "Krona one"));
+        fonts.add(new FontInfo(R.font.viaoda_libre, "Viaoda Libre"));
+        fonts.add(new FontInfo(R.font.abel, "Able"));
+        fonts.add(new FontInfo(R.font.belleza, "Belleza"));
+        fonts.add(new FontInfo(R.font.cherry_swash, "Cherry Swash"));
+        fonts.add(new FontInfo(R.font.asul, "Asul"));
+        fonts.add(new FontInfo(R.font.coming_soon, "Coming Soon"));
+        fonts.add(new FontInfo(R.font.roboto_medium, "Roboto Medium"));
+        fonts.add(new FontInfo(R.font.slabo_27px, "Slabo"));
         return fonts;
     }
 }

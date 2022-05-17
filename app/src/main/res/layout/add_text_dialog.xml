@@ -107,4 +107,19 @@
         tools:layout_height="wrap_content"
         tools:listitem="@layout/color_picker_item_list" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/add_text_font_picker_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:visibility="visible"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/action_buttons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:background="@android:color/black"
+        tools:layout_height="wrap_content"
+        tools:listitem="@layout/font_picker_list_item" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

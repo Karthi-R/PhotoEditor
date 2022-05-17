@@ -47,7 +47,8 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
 
     private TextEditor mTextEditor;
 
-    RecyclerView addTextColorPickerRecyclerView;
+    RecyclerView colorPickerRecyclerView;
+    RecyclerView fontPickerRecyclerView;
 
     public interface TextEditor {
         void onDone(String inputText, int textColor, int bgColor, boolean isBold, boolean isUnderline, int gravity);
@@ -131,10 +132,10 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
         mAddTextDoneTextView = view.findViewById(R.id.add_text_done_tv);
 
         //Setup the color picker for text color
-        addTextColorPickerRecyclerView = view.findViewById(R.id.add_text_color_picker_recycler_view);
+        colorPickerRecyclerView = view.findViewById(R.id.add_text_color_picker_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        addTextColorPickerRecyclerView.setLayoutManager(layoutManager);
-        addTextColorPickerRecyclerView.setHasFixedSize(true);
+        colorPickerRecyclerView.setLayoutManager(layoutManager);
+        colorPickerRecyclerView.setHasFixedSize(true);
         ColorPickerAdapter colorPickerAdapter = new ColorPickerAdapter(getActivity());
 
         //This listener will change the text color when clicked on any color from picker
@@ -151,7 +152,15 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
 
         });
 
-        addTextColorPickerRecyclerView.setAdapter(colorPickerAdapter);
+        colorPickerRecyclerView.setAdapter(colorPickerAdapter);
+
+
+        // Setup Font picker
+        fontPickerRecyclerView = view.findViewById(R.id.add_text_font_picker_recycler_view);
+        fontPickerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        fontPickerRecyclerView.setHasFixedSize(true);
+        FontPickerAdapter fontPickerAdapter = new FontPickerAdapter(getActivity());
+        fontPickerRecyclerView.setAdapter(fontPickerAdapter);
 
         //mAddTextEditText.setTextColor(mTextColor);
         mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -180,17 +189,17 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
 
         switch (v.getId()) {
             case R.id.btn_color_picker:
-                boolean isFontColorPickerVisible = addTextColorPickerRecyclerView.getVisibility() == View.VISIBLE;
+                boolean isFontColorPickerVisible = colorPickerRecyclerView.getVisibility() == View.VISIBLE;
                 bgBtn.setActivated(false);
                 colorPickerBtn.setActivated(!isFontColorPickerVisible);
-                addTextColorPickerRecyclerView.setVisibility(isFontColorPickerVisible ? View.GONE : View.VISIBLE);
+                colorPickerRecyclerView.setVisibility(isFontColorPickerVisible ? View.GONE : View.VISIBLE);
                 break;
 
             case R.id.btn_bg:
-                boolean isFontBgPickerVisible = addTextColorPickerRecyclerView.getVisibility() == View.VISIBLE;
+                boolean isFontBgPickerVisible = colorPickerRecyclerView.getVisibility() == View.VISIBLE;
                 colorPickerBtn.setActivated(false);
                 bgBtn.setActivated(!isFontBgPickerVisible);
-                addTextColorPickerRecyclerView.setVisibility(isFontBgPickerVisible ? View.GONE : View.VISIBLE);
+                colorPickerRecyclerView.setVisibility(isFontBgPickerVisible ? View.GONE : View.VISIBLE);
                 break;
 
             case R.id.btn_bold:
