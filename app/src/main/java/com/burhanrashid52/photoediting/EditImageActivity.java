@@ -24,6 +24,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.ChangeBounds;
@@ -35,7 +36,6 @@ import com.burhanrashid52.photoediting.filters.FilterViewAdapter;
 import com.burhanrashid52.photoediting.tools.EditingToolsAdapter;
 import com.burhanrashid52.photoediting.tools.ToolType;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.resources.TextAppearance;
 
 import java.io.File;
 import java.io.IOException;
@@ -207,13 +207,14 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     public void onEditTextChangeListener(final View rootView, String text, TextStyleBuilder style) {
         TextEditorDialogFragment textEditorDialogFragment =
                 TextEditorDialogFragment.show(this, style, text);
-        textEditorDialogFragment.setOnTextEditorListener((inputText, textColor, bgColor, isBold, isUnderline, gravity) -> {
+        textEditorDialogFragment.setOnTextEditorListener((inputText, textColor, bgColor, isBold, isUnderline, gravity, mFont) -> {
             final TextStyleBuilder styleBuilder = new TextStyleBuilder();
             styleBuilder.withTextColor(textColor);
             styleBuilder.withBackgroundColor(bgColor);
             styleBuilder.withTextStyle(isBold ? 1 : 0);
             styleBuilder.withGravity(gravity);
             styleBuilder.withTextFlag(isUnderline ? Paint.UNDERLINE_TEXT_FLAG : 0);
+            styleBuilder.withTextFont(mFont);
 
             mPhotoEditor.editText(rootView, inputText, styleBuilder);
             mTxtCurrentTool.setText(R.string.label_text);
@@ -436,13 +437,14 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                 break;
             case TEXT:
                 TextEditorDialogFragment textEditorDialogFragment = TextEditorDialogFragment.show(this);
-                textEditorDialogFragment.setOnTextEditorListener((inputText, textColor, bgColor, isBold, isUnderline, gravity) -> {
+                textEditorDialogFragment.setOnTextEditorListener((inputText, textColor, bgColor, isBold, isUnderline, gravity, mFont) -> {
                     final TextStyleBuilder styleBuilder = new TextStyleBuilder();
                     styleBuilder.withTextColor(textColor);
                     styleBuilder.withBackgroundColor(bgColor);
                     styleBuilder.withTextStyle(isBold ? 1 : 0);
                     styleBuilder.withGravity(gravity);
                     styleBuilder.withTextFlag(isUnderline ? Paint.UNDERLINE_TEXT_FLAG : 0);
+                    styleBuilder.withTextFont(mFont);
 
                     mPhotoEditor.addText(inputText, styleBuilder);
                     mTxtCurrentTool.setText(R.string.label_text);

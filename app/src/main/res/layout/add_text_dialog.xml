@@ -58,36 +58,43 @@
             android:id="@+id/btn_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:src="@drawable/ic_baseline_format_bold_24" />
 
         <ImageButton
             android:id="@+id/btn_underline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:src="@drawable/ic_baseline_format_underlined_24" />
 
         <ImageButton
             android:id="@+id/btn_color_picker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:src="@drawable/ic_baseline_format_color_text_24" />
 
         <ImageButton
             android:id="@+id/btn_bg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:src="@drawable/ic_baseline_format_color_fill_24" />
 
         <ImageButton
             android:id="@+id/btn_align"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:src="@drawable/ic_baseline_format_align_center_24" />
+
+        <ImageButton
+            android:id="@+id/btn_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_abc_24" />
 
     </LinearLayout>
 
@@ -113,7 +120,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="10dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/action_buttons"
         app:layout_constraintEnd_toEndOf="parent"

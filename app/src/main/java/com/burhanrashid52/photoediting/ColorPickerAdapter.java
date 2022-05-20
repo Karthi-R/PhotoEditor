@@ -48,7 +48,8 @@ public class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.colorPickerView.setBackgroundColor(colorPickerColors.get(position));
+        //holder.colorPickerView.setBackgroundColor(colorPickerColors.get(position));
+        buildColorPickerView(holder.colorPickerView, colorPickerColors.get(position));
     }
 
     @Override

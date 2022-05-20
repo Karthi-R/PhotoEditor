@@ -41,8 +41,9 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
     private TextView mAddTextDoneTextView;
     private InputMethodManager mInputMethodManager;
 
-    private ImageButton colorPickerBtn, boldBtn, alignBtn, bgBtn, underlineBtn;
+    private ImageButton colorPickerBtn, boldBtn, alignBtn, bgBtn, underlineBtn, fontBtn;
     private int mTextColor, mBgColor, mGravity = Gravity.CENTER;
+    private Typeface mFont;
     private boolean isBold, isUnderline;
 
     private TextEditor mTextEditor;
@@ -51,7 +52,7 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
     RecyclerView fontPickerRecyclerView;
 
     public interface TextEditor {
-        void onDone(String inputText, int textColor, int bgColor, boolean isBold, boolean isUnderline, int gravity);
+        void onDone(String inputText, int textColor, int bgColor, boolean isBold, boolean isUnderline, int gravity, Typeface mFont);
     }
 
 
@@ -102,6 +103,7 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
         boldBtn = view.findViewById(R.id.btn_bold);
         bgBtn = view.findViewById(R.id.btn_bg);
         alignBtn = view.findViewById(R.id.btn_align);
+        fontBtn = view.findViewById(R.id.btn_font);
         underlineBtn = view.findViewById(R.id.btn_underline);
 
         TextStyleBuilder styleBuilder = new TextStyleBuilder();
@@ -114,6 +116,9 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
             mGravity = (int) styleBuilder.getKey(TextStyleBuilder.TextStyle.GRAVITY);
             isBold = (int) styleBuilder.getKey(TextStyleBuilder.TextStyle.TEXT_STYLE) == Typeface.BOLD;
             isUnderline = (int) styleBuilder.getKey(TextStyleBuilder.TextStyle.TEXT_FLAG) == Paint.UNDERLINE_TEXT_FLAG;
+            if (styleBuilder.getKey(TextStyleBuilder.TextStyle.FONT_FAMILY) != null) {
+                mFont = (Typeface) styleBuilder.getKey(TextStyleBuilder.TextStyle.FONT_FAMILY);
+            }
 
             colorPickerBtn.setColorFilter(mTextColor, android.graphics.PorterDuff.Mode.SRC_IN);
             bgBtn.setColorFilter(mBgColor, android.graphics.PorterDuff.Mode.SRC_IN);
@@ -161,6 +166,10 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
         fontPickerRecyclerView.setHasFixedSize(true);
         FontPickerAdapter fontPickerAdapter = new FontPickerAdapter(getActivity());
         fontPickerRecyclerView.setAdapter(fontPickerAdapter);
+        fontPickerAdapter.setFontPickerClickListener(font -> {
+            mAddTextEditText.setTypeface(font);
+            mFont = font;
+        });
 
         //mAddTextEditText.setTextColor(mTextColor);
         mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -171,7 +180,7 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
             dismiss();
             String inputText = mAddTextEditText.getText().toString();
             if (!TextUtils.isEmpty(inputText) && mTextEditor != null) {
-                mTextEditor.onDone(inputText, mTextColor, mBgColor, isBold, isUnderline, mGravity);
+                mTextEditor.onDone(inputText, mTextColor, mBgColor, isBold, isUnderline, mGravity, mFont);
             }
         });
 
@@ -180,6 +189,7 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
         underlineBtn.setOnClickListener(this);
         boldBtn.setOnClickListener(this);
         alignBtn.setOnClickListener(this);
+        fontBtn.setOnClickListener(this);
 
     }
 
@@ -189,6 +199,7 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
 
         switch (v.getId()) {
             case R.id.btn_color_picker:
+                fontPickerRecyclerView.setVisibility(View.GONE);
                 boolean isFontColorPickerVisible = colorPickerRecyclerView.getVisibility() == View.VISIBLE;
                 bgBtn.setActivated(false);
                 colorPickerBtn.setActivated(!isFontColorPickerVisible);
@@ -196,6 +207,7 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
                 break;
 
             case R.id.btn_bg:
+                fontPickerRecyclerView.setVisibility(View.GONE);
                 boolean isFontBgPickerVisible = colorPickerRecyclerView.getVisibility() == View.VISIBLE;
                 colorPickerBtn.setActivated(false);
                 bgBtn.setActivated(!isFontBgPickerVisible);
@@ -216,6 +228,12 @@ public class TextEditorDialogFragment extends DialogFragment implements View.OnC
                 mGravity = mGravity == Gravity.LEFT ? Gravity.RIGHT : (mGravity == Gravity.RIGHT) ? Gravity.CENTER : Gravity.LEFT;
                 mAddTextEditText.setGravity(mGravity);
                 updateGravityBtn();
+                break;
+
+            case R.id.btn_font:
+                boolean isFontPickerVisible = fontPickerRecyclerView.getVisibility() == View.VISIBLE;
+                fontPickerRecyclerView.setVisibility(isFontPickerVisible ? View.GONE : View.VISIBLE);
+                colorPickerRecyclerView.setVisibility(View.GONE);
                 break;
         }
 

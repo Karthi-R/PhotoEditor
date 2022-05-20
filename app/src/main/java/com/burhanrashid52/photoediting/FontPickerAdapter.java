@@ -22,9 +22,15 @@ public class FontPickerAdapter extends RecyclerView.Adapter<FontPickerAdapter.Vi
     private LayoutInflater inflater;
     private List<FontInfo> fontList;
 
+    private OnFontPickerClickListener fontPickerClickListener;
+
     public FontPickerAdapter(@NonNull Context context) {
         this.inflater = LayoutInflater.from(context);
         this.fontList = getDefaultFonts();
+    }
+
+    public void setFontPickerClickListener(OnFontPickerClickListener fontPickerClickListener) {
+        this.fontPickerClickListener = fontPickerClickListener;
     }
 
     @NonNull
@@ -52,11 +58,18 @@ public class FontPickerAdapter extends RecyclerView.Adapter<FontPickerAdapter.Vi
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             fontTv = itemView.findViewById(R.id.tv_font_name);
+
+            itemView.setOnClickListener(v -> {
+                if (fontPickerClickListener != null) {
+                    Typeface typeface = ResourcesCompat.getFont(itemView.getContext(), fontList.get(getAdapterPosition()).id);
+                    fontPickerClickListener.onFontPickerClickListener(typeface);
+                }
+            });
         }
     }
 
     public interface OnFontPickerClickListener {
-        void onFontPickerClickListener(int font);
+        void onFontPickerClickListener(Typeface font);
     }
 
     public static List<FontInfo> getDefaultFonts() {
